@@ -243,6 +243,15 @@ class TestProblem(BaseTester):
             'submitter': 0
         }]
 
+    def test_problem_filter_fuzzy_search(self, client_admin):
+        rv, rv_json, rv_data = BaseTester.request(
+            client_admin,
+            'get',
+            '/problem?offset=0&count=-1&name=problem',
+        )
+        assert rv.status_code == 200, rv_json
+        assert len(rv_data) != 0
+
     # student get problem list (GET /problem)
     def test_student_get_problem_list(self, client_student):
         rv = client_student.get('/problem?offset=0&count=5')
