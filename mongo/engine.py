@@ -41,6 +41,18 @@ class Duration(EmbeddedDocument):
 
 
 class User(Document):
+    meta = {
+        'indexes': [
+            {
+                'fields': ['$username', '$email'],
+                'default_language': 'english',
+                'weights': {
+                    'username': 10,
+                    'email': 3,
+                },
+            },
+        ]
+    }
     username = StringField(max_length=16, required=True, primary_key=True)
     user_id = StringField(db_field='userId', max_length=24, required=True)
     user_id2 = StringField(db_field='userId2', max_length=24, default='')
@@ -147,6 +159,17 @@ class ProblemDescription(EmbeddedDocument):
 
 
 class Problem(Document):
+    meta = {
+        'indexes': [
+            {
+                'fields': ['$problem_name'],
+                'default_language': 'english',
+                'weights': {
+                    'problem_name': 10,
+                },
+            },
+        ],
+    }
     problem_id = IntField(db_field='problemId', required=True, unique=True)
     courses = ListField(ReferenceField('Course'), default=list)
     problem_status = IntField(
