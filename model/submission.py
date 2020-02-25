@@ -169,7 +169,7 @@ def get_submission_list(
             status=status,
             language_type=language_type,
         )
-    except ValueError as e:
+    except (ValueError, IndexError) as e:
         return HTTPError(str(e), 400)
 
     submissions = [Submission(s.id).to_dict() for s in submissions]
@@ -289,7 +289,7 @@ def get_submission_count(
             status=status,
             language_type=language_type,
         )
-    except ValueError as e:
+    except (ValueError, IndexError) as e:
         return HTTPError(str(e), 400)
     return HTTPResponse('Padoru~', data={'count': len(submissions)})
 

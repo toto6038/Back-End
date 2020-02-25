@@ -334,8 +334,6 @@ class Submission(MongoBase, engine=engine.Submission):
         # update problem
         ac_submissions = Submission.filter(
             user=self.user,
-            offset=0,
-            count=-1,
             problem=self.problem,
             status=0,
         )
@@ -366,8 +364,8 @@ class Submission(MongoBase, engine=engine.Submission):
     @staticmethod
     def filter(
         user,
-        offset,
-        count,
+        offset=0,
+        count=-1,
         problem=None,
         submission=None,
         q_user=None,
@@ -411,7 +409,7 @@ class Submission(MongoBase, engine=engine.Submission):
         ]
 
         if offset >= len(submissions) and len(submissions):
-            raise ValueError(f'offset ({offset}) is out of range!')
+            raise IndexError(f'offset ({offset}) is out of range!')
 
         right = min(offset + count, len(submissions))
         if count == -1:
