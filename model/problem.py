@@ -23,7 +23,6 @@ def view_problem_list(user, offset, count, problem_id, tags, name):
             'offset and count are required!',
             400,
         )
-
     # casting args
     try:
         offset = int(offset)
@@ -33,7 +32,6 @@ def view_problem_list(user, offset, count, problem_id, tags, name):
             'offset and count must be integer!',
             400,
         )
-
     # check range
     if offset < 0:
         return HTTPError(
@@ -42,11 +40,9 @@ def view_problem_list(user, offset, count, problem_id, tags, name):
         )
     if count < -1:
         return HTTPError('count must >=-1!', 400)
-
     try:
         problem_id, name, tags = (parse.unquote(p or '') or None
                                   for p in [problem_id, name, tags])
-
         data = get_problem_list(
             user,
             offset,

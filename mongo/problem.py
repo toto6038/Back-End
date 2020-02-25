@@ -122,30 +122,31 @@ def can_view(user, problem):
 
 def get_problem_list(
     user,
-    offset: int,
-    count: int,
-    problem_id,
-    name,
-    tags: list,
+    offset: int = 0,
+    count: int = -1,
+    problem_id: int = None,
+    name: str = None,
+    tags: list = None,
 ):
     '''
     get a list of problems
     '''
-    ks = {'problem_id': problem_id, 'problem_name': name}
-    ks = {k: v for k, v in ks.items() if v is not None}
-    problems = engine.Problem.objects.filter(**ks).order_by('problemId')
+    # search by name
+    problems = engine.Problem.objects.order_by('problemId')
+    if name is not None:
+        problems = problems.search_text(name).order_by('$text_score')
     problems = [p for p in problems if can_view(user, p)]
+    # filter by tags (contains)
     if tags:
         tags = set(tags)
-        problems = [p for p in problems if len(set(p.tags) & tags)]
-
+        problems = [p for p in problems if (set(p.tags) & tags)]
+    # check index
     if offset >= len(problems) and len(problems):
         raise IndexError
-
+    # truncated
     right = len(problems) if count == -1 else offset + count
     right = min(len(problems), right)
     problems = problems[offset:right]
-
     return problems
 
 
