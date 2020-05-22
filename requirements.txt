@@ -1,6 +1,6 @@
 flask
 
-gunicorn
+gunicorn[eventlet]
 
 mongoengine==0.19.1
 blinker
