@@ -1,7 +1,5 @@
 from __future__ import annotations
-import json
 import os
-import io
 import pathlib
 import secrets
 import logging
@@ -12,6 +10,7 @@ from typing import (
     Union,
     List,
 )
+import tempfile
 import requests as rq
 import itertools
 from bson.son import SON
@@ -69,14 +68,10 @@ class SubmissionConfig(MongoBase, engine=engine.SubmissionConfig):
     TMP_DIR = pathlib.Path(
         os.getenv(
             'SUBMISSION_TMP_DIR',
-            '/tmp/submissions',
+            tempfile.TemporaryDirectory(suffix='noj-submisisons').name,
         ), )
 
-    def __new__(cls, *args, **ks):
-        cls.TMP_DIR.mkdir(exist_ok=True)
-        return super().__new__(cls, *args, **ks)
-
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
 
 
@@ -123,7 +118,9 @@ class Submission(MongoBase, engine=engine.Submission):
 
     @property
     def tmp_dir(self) -> pathlib.Path:
-        tmp_dir = self.config().TMP_DIR / self.username / self.id
+        tmp_dir = self.config().TMP_DIR
+        tmp_dir.mkdir(exist_ok=True)
+        tmp_dir = tmp_dir / self.username / self.id
         tmp_dir.mkdir(exist_ok=True, parents=True)
         return tmp_dir
 
