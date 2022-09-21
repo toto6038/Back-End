@@ -10,13 +10,15 @@ test:
   stage: test
   tags: [docker]
   image: python:3.8-slim
+  variables:
+    POETRY_HOME: /opt/poetry
   script:
     - apt update && apt install -y curl
     - curl -sSL https://install.python-poetry.org | python -
-    - poetry config virtualenvs.in-project true
-    - poetry install
-    - poetry run yapf -- --quiet --recursive --parallel --diff .
-    - poetry run pytest -- --cov=./ --cov-config=.coveragerc --junitxml=pytest-report.xml
+    - $POETRY_HOME/bin/poetry config virtualenvs.in-project true
+    - $POETRY_HOME/bin/poetry install
+    - $POETRY_HOME/bin/poetry run yapf -- --quiet --recursive --parallel --diff .
+    - $POETRY_HOME/bin/poetry run pytest -- --cov=./ --cov-config=.coveragerc --junitxml=pytest-report.xml
   artifacts:
     when: always
     reports:
